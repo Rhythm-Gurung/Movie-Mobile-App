@@ -1,10 +1,10 @@
 import MovieCard from '@/components/Cards';
 import { icons } from '@/constants/icons';
 import { images } from '@/constants/images';
-import { fetchMovie } from '@/services/api';
+import { fetchMovie, fetchTrendingMovies } from '@/services/api';
 import useFetch from '@/services/useFetch';
 import { useRouter } from 'expo-router';
-import { ActivityIndicator, FlatList, Image, ScrollView, Text, View } from 'react-native';
+import { ActivityIndicator, FlatList, Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import SearchBar from '../../components/SearchBar';
 
 export default function App() {
@@ -16,6 +16,12 @@ export default function App() {
     error:moviesError} = useFetch(()=>fetchMovie({
     query:''
   }))
+
+  const {
+    data: trending,
+    loading: trendingLoading,
+    error: trendingError,
+  } = useFetch(fetchTrendingMovies);
 
   return (
     <View className='flex-1 bg-primary'>
@@ -43,6 +49,51 @@ export default function App() {
                   placeholder="Search for a movie" value={''} onChangeText={function (text: string): void {
                     throw new Error('Function not implemented.');
                   } }              />
+
+              <View className='mt-8'>
+                <View className='flex-row items-center justify-between mb-4'>
+                  <Text className='text-lg text-white font-bold'>Trending Now</Text>
+                  <Text className='text-accent text-xs font-semibold uppercase'>This Week</Text>
+                </View>
+
+                {trendingLoading && (
+                  <ActivityIndicator size="small" color="#0000ff" />
+                )}
+
+                {trendingError && (
+                  <Text className='text-red-500'>Failed to load trending titles.</Text>
+                )}
+
+                {!trendingLoading && !trendingError && (
+                  <FlatList
+                    horizontal
+                    data={trending ?? []}
+                    keyExtractor={(item) => item.id.toString()}
+                    showsHorizontalScrollIndicator={false}
+                    contentContainerStyle={{ gap: 16 }}
+                    renderItem={({ item }) => (
+                      <TouchableOpacity
+                        className='w-32'
+                        onPress={() => router.push(`/movies/${item.id}`)}
+                      >
+                        <Image
+                          source={{
+                            uri: item.poster_path
+                              ? `https://image.tmdb.org/t/p/w500${item.poster_path}`
+                              : 'https://placehold.co/600x900/1a1a1a/ffffff.png',
+                          }}
+                          className='w-full h-48 rounded-3xl'
+                          resizeMode='cover'
+                        />
+                        <Text className='text-white text-sm font-semibold mt-3' numberOfLines={1}>
+                          {item.title}
+                        </Text>
+                        <Text className='text-light-300 text-xs mt-1'>{item.release_date?.split('-')[0]}</Text>
+                      </TouchableOpacity>
+                    )}
+                  />
+                )}
+              </View>
               <>
                 <Text className='text-lg text-white font-bold mt-5 mb-3'>Latest Movies</Text>
 
