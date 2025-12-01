@@ -1,35 +1,92 @@
-import { Tabs } from 'expo-router';
-import React from 'react';
+import { icons } from '@/constants/icons'
+import { Tabs } from 'expo-router'
+import React from 'react'
+import Card from '../component/NavCard'
 
-import { HapticTab } from '@/components/haptic-tab';
-import { IconSymbol } from '@/components/ui/icon-symbol';
-import { Colors } from '@/constants/theme';
-import { useColorScheme } from '@/hooks/use-color-scheme';
 
-export default function TabLayout() {
-  const colorScheme = useColorScheme();
-
+const _layout = () => {
   return (
-    <Tabs
-      screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-        headerShown: false,
-        tabBarButton: HapticTab,
-      }}>
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: 'Home',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
-        }}
-      />
-      <Tabs.Screen
-        name="explore"
-        options={{
-          title: 'Explore',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
-        }}
-      />
+    <Tabs 
+        screenOptions={{
+        tabBarShowLabel: false,
+        tabBarItemStyle:{
+            width:'100%',
+            height: '100%',
+            justifyContent: 'center',
+            alignItems: 'center'
+        },
+        
+        tabBarStyle: {
+            backgroundColor: '#0f0D23',
+            borderRadius: 50,
+            marginHorizontal:20,
+            marginBottom: 36,
+            height: 52,
+            position: 'absolute',
+            overflow: 'hidden',
+            borderWidth: 1,
+            borderColor: '#0f0d23'
+
+        }
+    }}>
+        <Tabs.Screen
+            name='index'
+            options={{
+                title:'Home',
+                headerShown: false,
+                tabBarIcon: ({focused}) => (
+                    <Card 
+                        focused={focused}
+                        icon={icons.home}
+                        title="Home"
+                    />
+                )
+            }}
+        />
+        <Tabs.Screen
+            name='profile'
+            options={{
+                title: 'Profile',
+                headerShown: false,
+                tabBarIcon: ({focused}) => (
+                    <Card 
+                        focused={focused}
+                        icon={icons.person}
+                        title="Profile"
+                    />
+                )
+            }}
+        />
+        <Tabs.Screen 
+            name='saved' 
+            options={{
+                title: 'Saved',
+                headerShown:false,
+                tabBarIcon: ({focused}) => (
+                    <Card 
+                        focused={focused}
+                        icon={icons.save}
+                        title="Saved"
+                    />
+                )
+            }}
+        />
+        <Tabs.Screen
+            name= 'search'
+            options={{
+                title:'Search',
+                headerShown:false,
+                tabBarIcon: ({focused}) => (
+                    <Card 
+                        focused={focused}
+                        icon={icons.search}
+                        title="Search"
+                    />
+                )
+            }}
+        />
     </Tabs>
-  );
+  )
 }
+
+export default _layout
